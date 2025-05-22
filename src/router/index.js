@@ -8,6 +8,7 @@ const routes = [
   { path: '/login', component: Login },
   { path: '/home', component: Home },
   { path: '/professional', component: ProfessionalSearch },
+  { path: '/sentence/detail/:id', component: ProfessionalSearch },
 ]
 
 const router = createRouter({

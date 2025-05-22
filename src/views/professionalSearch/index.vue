@@ -7,9 +7,9 @@
     
       <el-dialog v-model="dialogVisible" title="截图结果">
         <img :src="screenshotData" style="max-width: 100%;" />
-        <div v-if="recognizedText" class="text-result">
+        <div v-if="sentence" class="text-result">
           <h4>识别结果：</h4>
-          <p>{{ recognizedText }}</p>
+          <p>{{ sentence }}</p>
         </div>
         <template #footer>
           <el-button @click="dialogVisible = false">取消</el-button>
@@ -26,32 +26,34 @@
 
     <el-form label-width="240px">
       <el-form-item label="Original Language:">
-        <el-select v-model="originalLanguage" placeholder="Select">
+        <el-select v-model="originalLang" placeholder="Select">
           <el-option label="English" value="en"></el-option>
           <el-option label="Spanish" value="es"></el-option>
         </el-select>
       </el-form-item>
 
       <el-form-item label="Target Content:">
-        <el-input v-model="targetContent" placeholder="Enter target content"></el-input>
+        <el-input v-model="targetWord" placeholder="Enter target content"></el-input>
       </el-form-item>
 
       <el-form-item label="Sentence:">
-        <el-input type="textarea" v-model="recognizedText" placeholder="Enter sentence"></el-input>
+        <el-input type="textarea" v-model="sentence" placeholder="Enter sentence"></el-input>
         <el-button @click="handleCapture" style="margin-top: 16px;">Sentence Example</el-button>
       </el-form-item>
 
       <el-form-item label="Translation Language:">
-        <el-select v-model="translationLanguage" placeholder="Select">
-          <el-option label="Spanish" value="es"></el-option>
+        <el-select v-model="targetLang" placeholder="Select">
           <el-option label="English" value="en"></el-option>
+          <el-option label="French" value="fr"></el-option>
+          <el-option label="Spanish" value="es"></el-option>
+          <el-option label="Chinese" value="zh-hans"></el-option>
         </el-select>
         <el-button @click="handleCapture" style="margin-left: 16px;">Translate</el-button>
       </el-form-item>
 
       <el-form-item>
         <span class="cus-label">Please input a short description about the sentences.</span>
-        <el-input type="textarea" v-model="description" placeholder="Enter description"></el-input>
+        <el-input type="textarea" v-model="targetWordDesc" placeholder="Enter description"></el-input>
         <el-button @click="handleCapture" style="margin-top: 16px;">Advanced Search</el-button>
       </el-form-item>
 
@@ -64,14 +66,14 @@
         <div style="display: flex; flex-direction: column;">
           <span class="cus-label">If you know a perfect sentence contained the target word on YouTube, fill the video URL in the blank, and we will show you this sentence first.</span>
           <div class="d-flex">
-            <el-input v-model="youtubeUrl" placeholder="Enter YouTube URL" style="width: 500px;"></el-input>
+            <el-input v-model="preferredVideoUrl" placeholder="Enter YouTube URL" style="width: 500px;"></el-input>
             <el-button @click="submit" style="margin-left: 20px;">Submit</el-button>
           </div>
         </div>
       </el-form-item>
 
       <el-form-item>
-        <el-input type="textarea" v-model="additionalInput" placeholder="Additional input"></el-input>
+        <el-input type="textarea" v-model="preferredVideoSentence" placeholder="Additional input"></el-input>
       </el-form-item>
     </el-form>
   </div>
@@ -86,13 +88,13 @@ import { ElMessage } from 'element-plus';
 import { CirclePlusFilled } from '@element-plus/icons-vue';
 
 // 页面初始化变量
-const originalLanguage = ref('');
-const targetContent = ref('');
-const translationLanguage = ref('');
-const description = ref('');
+const originalLang = ref('');
+const targetWord = ref('');
+const targetLang = ref('');
+const targetWordDesc = ref('');
 const localFilePath = ref('');
-const youtubeUrl = ref('');
-const additionalInput = ref('');
+const preferredVideoUrl = ref('');
+const preferredVideoSentence = ref('');
 
 // 截图相关
 const isSelecting = ref(false);
@@ -100,7 +102,7 @@ const startPos = ref({ x: 0, y: 0 });
 const selectionArea = ref(null);
 const screenshotData = ref('');
 const dialogVisible = ref(false);
-const recognizedText = ref('');
+const sentence = ref('');
 
 const setFilePath = () => {
   console.log('File path set:', this.localFilePath);
@@ -190,7 +192,7 @@ const recognizeText = async (imageUrl) => {
 const onScreenshotComplete = async () => {
   try {
     const text = await recognizeText(screenshotData.value);
-    recognizedText.value = text;
+    sentence.value = text;
     ElMessage.success('文字识别完成');
   } catch (error) {
     console.error('OCR Error:', error);
@@ -213,11 +215,11 @@ const handleFileChange = async (e) => {
     return;
   }
 
-  recognizedText.value = '';
+  sentence.value = '';
 
   try {
     const text = await recognizeText(file);
-    recognizedText.value = text;
+    sentence.value = text;
     ElMessage.success('识别成功');
   } catch (error) {
     ElMessage.error(`识别失败: ${error.message}`);
