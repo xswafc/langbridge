@@ -2,10 +2,12 @@
   <div style="margin-top: 20px;">
     <!-- 视频播放器 -->
     <div v-if="selectedVideo">
-      <div class="d-flex" style="align-items: anchor-center;">
+      <div :class="position === 'bottom' ? '' : 'd-flex'" style="align-items: anchor-center;">
         <video ref="videoPlayer" controls :src="selectedVideo.src" @timeupdate="onTimeUpdate" style="width: 400px;"></video>
-        <el-button style="margin-left: 20px;" @click="selectVideo"><el-icon style="margin-right: 8px;"><VideoPlay /></el-icon>Play</el-button>
-        <el-button style="margin-left: 20px;" @click="selectVideo"><el-icon style="margin-right: 8px;"><CaretRight /></el-icon>Watch in YouTube</el-button>
+        <div class="d-flex">
+          <el-button :style="{marginLeft: position === 'bottom' ? '' : '20px'}" @click="selectVideo"><el-icon style="margin-right: 8px;"><VideoPlay /></el-icon>Play</el-button>
+          <el-button style="margin-left: 20px;" @click="selectVideo"><el-icon style="margin-right: 8px;"><CaretRight /></el-icon>Watch in YouTube</el-button>
+        </div>
       </div>
       <div class="controls">
         <div style="margin: 10px 0;">
@@ -30,6 +32,10 @@ const props = defineProps({
     type: Object,
     default: null,
   },
+  position: {
+    type: String,
+    default: 'right'
+  }
 });
 
 const videoPlayer = ref(null);

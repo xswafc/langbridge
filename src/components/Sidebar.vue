@@ -15,6 +15,9 @@
       <el-menu-item index="/professional">
         <template #title>Professional Search Panel</template>
       </el-menu-item>
+      <el-menu-item index="/search-results">
+        <template #title>Search Results</template>
+      </el-menu-item>
     </el-menu>
     <Hamburger
       id="hamburger-container"
