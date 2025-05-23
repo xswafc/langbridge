@@ -53,7 +53,7 @@
           <div class="left">
             <div class="d-flex">
               <span style="margin-right: 16px;">{{ index + 1 }}</span>
-              <div v-if="sentence.editable" class="sentence-content">
+              <div v-if="!sentence.editable" class="sentence-content">
                 {{ sentence.sentenceText }}
               </div>
               <el-input
@@ -68,19 +68,19 @@
             </div>
             <div class="d-flex">
               <div style="margin: 16px;">
-                <TagIcon :tagName="'mdi:pen'" :color="sentence.editable ? 'black' : '#FFA500'" @click="toggleEditColor(sentence)" />
-                <TagIcon :tagName="'streamline:paragraph-solid'" :color="sentence.editable ? 'black' : '#FFA500'" @click="toggleEditColor(sentence)" />
+                <TagIcon :tagName="'mdi:pen'" :color="!sentence.editable ? 'black' : '#FFA500'" @click="toggleEditColor(sentence)" />
+                <TagIcon :tagName="'streamline:paragraph-solid'" :color="!sentence.editable ? 'black' : '#FFA500'" :size="18" @click="toggleEditColor(sentence)" />
               </div>
-              <div v-if="!sentence.editable" class="controls">
-                <el-button type="primary" size="small" @click="confirmEdit">Confirm</el-button>
-                <el-button type="danger" size="small" @click="cancelEdit">Cancel</el-button>
+              <div v-if="sentence.editable" class="controls">
+                <el-button type="primary" size="small" @click="confirmEdit(sentence)">Confirm</el-button>
+                <el-button type="danger" size="small" @click="cancelEdit(sentence)">Cancel</el-button>
               </div>
             </div>
           </div>
           <div class="right">
-            <div class="d-flex">
-              <el-icon :size="20" style="margin-right: 8px;"><VideoPlay /></el-icon>
-              <TagIcon :tagName="sentence.editable ? 'material-symbols:visibility-rounded' : 'material-symbols:visibility-off-rounded'" :color="'black'" :size="24" @click="toggleEditColor(sentence)" />
+            <div class="d-flex" style="align-items: anchor-center;">
+              <TagIcon :tagName="'mdi:play-circle-outline'" :color="'black'" />
+              <TagIcon :tagName="!sentence.editable ? 'material-symbols:visibility-rounded' : 'material-symbols:visibility-off-rounded'" :color="'black'" :size="24" @click="toggleEditColor(sentence)" />
               <CustomRateStar v-model="sentence.stars"/>
               <TagIcon :tagName="'mdi:tag'" :color="tagSenColor" @click="toggleSenTagColor" />
               <TagIcon :tagName="'mdi:notebook'" :color="notebookSenColor" @click="toggleNotebookSenColor" />
@@ -103,7 +103,7 @@ import CustomRateHeart from '@components/CustomRateHeart.vue';
 import CustomRateStar from '@components/CustomRateStar.vue';
 import TagIcon from '@components/TagIcon.vue';
 
-import { DeleteFilled, VideoPlay } from '@element-plus/icons-vue';
+import { DeleteFilled } from '@element-plus/icons-vue';
 
 
 const youtubeUrl = ref('');
@@ -193,7 +193,7 @@ const results = reactive([
         "num": 2 //此难度的单词数
       }
     ],
-    "editable": true //文本和时间戳是否可编辑
+    "editable": false //文本和时间戳是否可编辑
   },
   {
     "sentenceId": "2",  //句子id
@@ -221,13 +221,12 @@ const results = reactive([
 
 // 确认编辑
 const confirmEdit = (sentence) => {
-  sentence.editing = false;
-  // 更新其他相关数据
+  sentence.editable = false;
 };
 
 // 取消编辑
 const cancelEdit = (sentence) => {
-  sentence.editing = false;
+  sentence.editable = false;
 };
 </script>
 
@@ -263,6 +262,9 @@ const cancelEdit = (sentence) => {
   .right {
     width: 30%;
     margin-left: 20px;
+  }
+  .left {
+    flex: 1;
   }
 }
 
